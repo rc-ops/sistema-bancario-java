@@ -36,24 +36,47 @@ public class Operacoes extends Cliente{
     }
 
     private static boolean pesquisarCliente(String cpf){
-        if (clientes.size() == 0){
-            System.err.println("Não há nenhum cliente cadastrado no momento.");
-            return false;
-        } else{
-            return clientes.contains(cpf);
+        Connection connection = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            connection = DriverManager.getConnection("jdbc:sqlite:src/main/resources/database/users.db");
+            String sql = "SELECT cpf, nome, saldo " + "FROM users WHERE cpf = ? ";
+            ps = connection.prepareStatement(sql);
+            ps.setString(1, cpf);
+
+            rs = ps.executeQuery();
+            while (rs.next()){
+                System.out.println("============= Dados do cliente =============");
+                System.out.println("Nome: " + rs.getString("nome"));
+                System.out.println("CPF: " + rs.getString("cpf"));
+                System.out.println("Saldo: R$" + rs.getDouble("saldo"));
+                System.out.println("============================================");
+
+            }
+            return true;
+
+        } catch (SQLException e){
+            System.out.println(e.getMessage());
+        } finally {
+            try {
+                rs.close();
+                connection.close();
+                ps.close();
+            } catch (SQLException e){
+                System.out.println(e.getMessage());
+            }
         }
+        return false;
     }
 
     // Todo: ver porque esse método não está funcionando
-    private static void consultaSaldo(){
+    private static void consultaSaldo() {
         System.out.print("Insira o CPF do cliente a ser pesquisado: ");
         sc.skip("\\R?");
         String cpf = sc.nextLine();
-        if (pesquisarCliente(cpf)){
-            System.out.println("Informações encontradas do cliente com CPF " + cpf);
-            System.out.println(clientes.get(clientes.indexOf(cpf)));
-        } else{
-            System.err.println("CPF inválido ou cliente não cadastrado no sistema.");
+        if (!pesquisarCliente(cpf)) {
+            System.err.println("CPF inválido ou cliente não cadastrado.");
         }
     }
 
@@ -68,6 +91,7 @@ public class Operacoes extends Cliente{
             System.out.println("4 - Realizar deposito.");
             System.out.println("5 - Sair do programa.");
             System.out.print("Insira a opção desejada: ");
+            sc.skip("\\R?");
             opcao = sc.nextInt();
 
             switch (opcao){
@@ -86,11 +110,10 @@ public class Operacoes extends Cliente{
     private static void connectDatabase(String nome, String cpf, double saldo){
         Connection connection = null;
         try{
-            // Todo: resolver o erro No suitable driver found for jdbc:sqlite:/sistema/database/users.db
             connection = DriverManager.getConnection("jdbc:sqlite:src/main/resources/database/users.db");
             Statement statement = connection.createStatement();
             statement.setQueryTimeout(30);
-            String sql = "INSERT INTO users(nome, cpf, saldo) VALUES(?,?,?)";
+            String sql = "INSERT INTO users (nome, cpf, saldo) VALUES (?,?,?)";
             PreparedStatement pstmt = connection.prepareStatement(sql);
             pstmt.setString(1, nome);
             pstmt.setString(2, cpf);

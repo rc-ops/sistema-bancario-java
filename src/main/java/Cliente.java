@@ -1,11 +1,9 @@
-import java.util.ArrayList;
+
 
 public class Cliente{
     private String nome;
     private String cpf;
     private double saldoDisponivel;
-    public static ArrayList <String> clientes = new ArrayList<>();
-   // public static Cliente[] clientes = new Cliente[0];
 
     public Cliente() {
     }
