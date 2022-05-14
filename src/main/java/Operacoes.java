@@ -107,8 +107,6 @@ public class Operacoes extends Cliente{
         ResultSet rs = null;
         double saldo = consultaSaldo(cpf);
 
-        //String sql = "UPDATE card SET balance = ? WHERE number = ?";
-
         String sqlUpdate = "UPDATE users SET saldo = ? WHERE cpf = ?";
 
         try {
@@ -130,6 +128,33 @@ public class Operacoes extends Cliente{
 
     }
 
+    private static void realizarDeposito(String cpf, double quantia){
+        Connection connection;
+        ResultSet rs = null;
+        double saldo = consultaSaldo(cpf);
+
+        String sqlUpdate = "UPDATE users SET saldo = ? WHERE cpf = ?";
+
+        try {
+            connection = DriverManager.getConnection("jdbc:sqlite:src/main/resources/database/users.db");
+            PreparedStatement ps = connection.prepareStatement(sqlUpdate);
+            ps.setString(2, cpf);
+            ps.setDouble(1, saldo+quantia);
+            ps.executeUpdate();
+
+            ps.close();
+            connection.close();
+            System.out.println("Depósito realizado com sucesso.");
+
+
+        } catch (SQLException e){
+            System.err.println("Erro ao realizar depósito.");
+            System.out.println(e.getMessage());
+        }
+
+    }
+
+
     protected static void menu(){
         int opcao;
         do {
@@ -138,7 +163,7 @@ public class Operacoes extends Cliente{
             System.out.println("1 - Cadastrar Cliente");
             System.out.println("2 - Consulta Saldo");
             System.out.println("3 - Realizar saque");
-            System.out.println("4 - Realizar deposito.");
+            System.out.println("4 - Realizar depósito");
             System.out.println("5 - Sair do programa.");
             System.out.print("Insira a opção desejada: ");
             sc.skip("\\R?");
@@ -154,12 +179,23 @@ public class Operacoes extends Cliente{
                 case 3:
                     System.out.print("Insira o CPF do cliente: ");
                     sc.skip("\\R?");
-                    String cpf = sc.nextLine();
+                    String cpf1 = sc.nextLine();
                     System.out.print("Insira a quantia a ser retirada: R$");
                     sc.skip("\\R?");
-                    double quantia = sc.nextDouble();
-                    realizarSaque(cpf, quantia);
+                    double quantia_retirada = sc.nextDouble();
+                    realizarSaque(cpf1, quantia_retirada);
                     break;
+                case 4:
+                    System.out.print("Insira o CPF do cliente: ");
+                    sc.skip("\\R?");
+                    String cpf2 = sc.nextLine();
+                    System.out.print("Insira a quantia a ser depositada: R$");
+                    sc.skip("\\R?");
+                    double quantia_depositada = sc.nextDouble();
+                    realizarDeposito(cpf2, quantia_depositada);
+                    break;
+                default:
+                    System.err.println("Opção inválida. Tente novamente.");
             }
 
 
