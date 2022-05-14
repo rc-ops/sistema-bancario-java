@@ -158,7 +158,7 @@ public class Operacoes extends Cliente{
     protected static void menu(){
         int opcao;
         do {
-            System.out.println("====== MENU ======");
+            System.out.println("======= MENU =======");
             System.out.println("Opções disponíveis: ");
             System.out.println("1 - Cadastrar Cliente");
             System.out.println("2 - Consulta Saldo");
