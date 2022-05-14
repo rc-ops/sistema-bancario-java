@@ -77,16 +77,17 @@ public class Operacoes extends Cliente{
     // Todo: ver porque esse método não está funcionando
     private static double consultaSaldo(String cpf) {
         double saldo = 0;
-
+        ResultSet rs = null;
 //        pesquisarCliente(cpf);
 
         Connection connection = null;
-        String sql = "select saldo " + "from users where cpf = ? ";
+        String sqlConsulta = "select saldo " + "from users where cpf = ? ";
 
         try{
             connection = DriverManager.getConnection("jdbc:sqlite:src/main/resources/database/users.db");
-            Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
+            PreparedStatement ps = connection.prepareStatement(sqlConsulta);
+            ps.setString(1, cpf);
+            rs = ps.executeQuery();
 
             while (rs.next()){
                 saldo = rs.getDouble("saldo");
