@@ -1,3 +1,3 @@
-# sistema-bancario-java
+# Sistema bancário Java
 
-Implementação de um simples sistema bancário em Java
+- Implementação de um simples sistema bancário em Java
