@@ -3,7 +3,6 @@ import java.util.Scanner;
 
 public class Operacoes extends Cliente{
     static Scanner sc = new Scanner(System.in);
-
     private static void cadastrarCliente(){
         System.out.println("====== CADASTRO DE CLIENTE ======");
 
@@ -17,10 +16,7 @@ public class Operacoes extends Cliente{
                 String cpf = sc.nextLine();
                 System.out.print("Insira o saldo: ");
                 double saldo = sc.nextDouble();
-
                 connectDatabase(nome, cpf, saldo);
-
-
             } catch (Exception e) {
                 System.err.println(("Ocorreu o seguinte erro: " + e.getMessage()));
                 System.out.println("Tentando novamente...");
@@ -59,7 +55,6 @@ public class Operacoes extends Cliente{
                 System.out.println("Saldo: R$" + rs.getDouble("saldo"));
                 System.out.println("============================================");
             }
-
         } catch (SQLException e){
             System.out.println(e.getMessage());
         } finally {
@@ -71,18 +66,13 @@ public class Operacoes extends Cliente{
                 System.out.println(e.getMessage());
             }
         }
-
     }
-
-    // Todo: ver porque esse método não está funcionando
     private static double consultaSaldo(String cpf) {
         double saldo = 0;
         ResultSet rs = null;
-//        pesquisarCliente(cpf);
 
         Connection connection = null;
         String sqlConsulta = "select saldo " + "from users where cpf = ? ";
-
         try{
             connection = DriverManager.getConnection("jdbc:sqlite:src/main/resources/database/users.db");
             PreparedStatement ps = connection.prepareStatement(sqlConsulta);
@@ -96,10 +86,7 @@ public class Operacoes extends Cliente{
             System.out.println(e.getMessage());
         }
 
-
         return saldo;
-
-
     }
 
     private static void realizarSaque(String cpf, double quantia){
@@ -125,14 +112,12 @@ public class Operacoes extends Cliente{
             System.err.println("Erro ao realizar saque.");
             System.out.println(e.getMessage());
         }
-
     }
 
     private static void realizarDeposito(String cpf, double quantia){
         Connection connection;
         ResultSet rs = null;
         double saldo = consultaSaldo(cpf);
-
         String sqlUpdate = "UPDATE users SET saldo = ? WHERE cpf = ?";
 
         try {
@@ -141,20 +126,15 @@ public class Operacoes extends Cliente{
             ps.setString(2, cpf);
             ps.setDouble(1, saldo+quantia);
             ps.executeUpdate();
-
             ps.close();
             connection.close();
             System.out.println("Depósito realizado com sucesso.");
-
-
         } catch (SQLException e){
             System.err.println("Erro ao realizar depósito.");
             System.out.println(e.getMessage());
         }
 
     }
-
-
     protected static void menu(){
         int opcao;
         do {
@@ -198,7 +178,6 @@ public class Operacoes extends Cliente{
                     System.err.println("Opção inválida. Tente novamente.");
             }
 
-
         } while (opcao != 5);
     }
 
@@ -215,7 +194,6 @@ public class Operacoes extends Cliente{
             ps.setDouble(3, saldo);
             ps.executeUpdate();
             System.out.println("Cliente cadastrado com sucesso!");
-
         } catch(SQLException e){
             System.out.println("Não foi possível cadastrar o usuário pelo seguinte motivo: ");
             System.err.println(e.getMessage());
